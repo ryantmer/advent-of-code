@@ -39,4 +39,3 @@ for y in range(y_max):
             x_mas_count += 1
 
 print("Part 2: %d X-MASes found" % x_mas_count)
-    
