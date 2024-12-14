@@ -30,31 +30,34 @@ print("There are %d trailheads" % len(trailheads))
 def out_of_bounds(row, col):
     return row < 0 or row > max_row or col < 0 or col > max_col
 
-def get_reachable_trail_ends(reachable_trail_ends, prev_values, row, col):
+def get_next_step(prev_values, row, col):
     prev_value = prev_values[-1]
     if prev_value == trail_end:
-        reachable_trail_ends.add((row, col))
+        return [prev_values]
 
+    paths = []
     for row_increment, col_increment in [(-1, 0), (1, 0), (0, 1), (0, -1)]:
         next_row = row + row_increment
         next_col = col + col_increment
         if out_of_bounds(next_row, next_col):
             continue
 
-        next_value = int(input[next_row][next_col])
+        next_value = int(input[row + row_increment][col + col_increment])
         if prev_value + 1 != next_value:
             # Not a 1-increment, skip this direction
             continue
 
         trail_so_far = prev_values[:] + [next_value]
-        get_reachable_trail_ends(reachable_trail_ends, trail_so_far, next_row, next_col)
-
-    return reachable_trail_ends
+        result = get_next_step(trail_so_far, row + row_increment, col + col_increment)
+        if len(result) > 0:
+            paths.extend([x for x in result])
+    
+    return paths
 
 trailhead_score_sum = 0
 for trailhead in trailheads:
     print("Checking trailhead", trailhead)
-    result = get_reachable_trail_ends(set(), [0], trailhead[0], trailhead[1])
+    result = get_next_step([0], trailhead[0], trailhead[1])
     trailhead_score = len(result)
     print("Result:", result, "Trailhead score:", trailhead_score)
     trailhead_score_sum += trailhead_score
